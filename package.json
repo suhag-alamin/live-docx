@@ -11,7 +11,9 @@
   "dependencies": {
     "@clerk/nextjs": "^5.2.4",
     "@clerk/themes": "^2.1.12",
-    "@lexical/react": "^0.16.1",
+    "@lexical/html": "0.16.1",
+    "@lexical/react": "0.16.1",
+    "@lexical/rich-text": "0.16.1",
     "@liveblocks/client": "^2.3.0",
     "@liveblocks/node": "^2.3.0",
     "@liveblocks/react": "^2.3.0",
@@ -25,8 +27,10 @@
     "@sentry/nextjs": "^8.18.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "jsm-editor": "^0.0.12",
-    "lexical": "^0.16.1",
+    "docx": "^9.5.1",
+    "file-saver": "^2.0.5",
+    "html2pdf.js": "^0.11.1",
+    "lexical": "0.16.1",
     "lucide-react": "^0.408.0",
     "nanoid": "^5.0.7",
     "next": "14.2.5",
@@ -44,5 +48,9 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "lexical": "0.16.1",
+    "@lexical/*": "0.16.1"
   }
 }

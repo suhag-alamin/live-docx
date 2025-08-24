@@ -11,23 +11,37 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import React from 'react';
 
-import { FloatingComposer, FloatingThreads, liveblocksConfig, LiveblocksPlugin, useEditorStatus } from '@liveblocks/react-lexical'
+import {
+  FloatingComposer,
+  FloatingThreads,
+  liveblocksConfig,
+  LiveblocksPlugin,
+  useEditorStatus,
+} from '@liveblocks/react-lexical';
 import Loader from '../Loader';
 
-import FloatingToolbarPlugin from './plugins/FloatingToolbarPlugin'
+import FloatingToolbarPlugin from './plugins/FloatingToolbarPlugin';
 import { useThreads } from '@liveblocks/react/suspense';
 import Comments from '../Comments';
 import { DeleteModal } from '../DeleteModal';
+import DownloadButtons from '../DownloadButtons';
 
-// Catch any errors that occur during Lexical updates and log them
-// or throw them as needed. If you don't throw them, Lexical will
-// try to recover gracefully without losing user data.
+// Adjust if you have a shared type elsewhere
+type UserType = 'editor' | 'viewer';
 
 function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
 }
 
-export function Editor({ roomId, currentUserType }: { roomId: string, currentUserType: UserType }) {
+export function Editor({
+  roomId,
+  currentUserType,
+  docTitle,
+}: {
+  roomId: string;
+  currentUserType: UserType;
+  docTitle?: string; // optional title used in export filenames
+}) {
   const status = useEditorStatus();
   const { threads } = useThreads();
 
@@ -45,18 +59,23 @@ export function Editor({ roomId, currentUserType }: { roomId: string, currentUse
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className="editor-container size-full">
-        <div className="toolbar-wrapper flex min-w-full justify-between">
+        <div className="toolbar-wrapper flex min-w-full items-center justify-between">
           <ToolbarPlugin />
-          {currentUserType === 'editor' && <DeleteModal roomId={roomId} />}
+          <div className="flex items-center gap-3">
+            {currentUserType === 'editor' && (
+              <DownloadButtons title={docTitle || 'document'} />
+            )}
+            {currentUserType === 'editor' && <DeleteModal roomId={roomId} />}
+          </div>
         </div>
 
         <div className="editor-wrapper flex flex-col items-center justify-start">
-          {status === 'not-loaded' || status === 'loading' ? <Loader /> : (
+          {status === 'not-loaded' || status === 'loading' ? (
+            <Loader />
+          ) : (
             <div className="editor-inner min-h-[1100px] relative mb-5 h-fit w-full max-w-[800px] shadow-md lg:mb-10">
               <RichTextPlugin
-                contentEditable={
-                  <ContentEditable className="editor-input h-full" />
-                }
+                contentEditable={<ContentEditable className="editor-input h-full" />}
                 placeholder={<Placeholder />}
                 ErrorBoundary={LexicalErrorBoundary}
               />
