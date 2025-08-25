@@ -27,7 +27,7 @@ LiveDocX is a cutting-edge collaborative document editor that revolutionizes the
 
 - ⚡ **Real-time Collaboration**: Multiple users can edit simultaneously with instant updates
 - 🎨 **Rich Text Editing**: Advanced formatting tools including fonts, colors, lists, and more
-- 🔒 **Secure Authentication**: GitHub OAuth integration with role-based permissions
+- 🔒 **Secure Authentication**: Google OAuth integration with role-based permissions
 - 📱 **Responsive Design**: Works seamlessly across all devices and screen sizes
 - 🚀 **Performance Optimized**: Built with Next.js for lightning-fast load times
 - 💬 **Interactive Comments**: Threaded discussions and mentions for better collaboration
@@ -81,7 +81,7 @@ LiveDocX addresses these challenges through a comprehensive technical approach:
 ```mermaid
 graph TD
     A[User Access] --> B{Authentication}
-    B -->|GitHub OAuth| C[Dashboard]
+    B -->|Google OAuth| C[Dashboard]
     C --> D[Document List]
     D --> E{Action}
     E -->|Create| F[New Document]
@@ -254,7 +254,7 @@ export const getAccessType = (userType: UserType): AccessType => {
 
 ### **Authentication & Database**
 
-- **[Clerk](https://clerk.com/)** - Complete authentication solution with GitHub OAuth
+- **[Clerk](https://clerk.com/)** - Complete authentication solution with Google OAuth
 - **[Liveblocks Database](https://liveblocks.io/)** - Real-time database for collaborative features
 
 ### **Development Tools**
@@ -267,7 +267,7 @@ export const getAccessType = (userType: UserType): AccessType => {
 
 ### **🔐 Authentication & Security**
 
-- **GitHub OAuth Integration** - Secure sign-in with GitHub accounts
+- **Google OAuth Integration** - Secure sign-in with GitHub accounts
 - **Session Management** - Persistent login sessions with automatic refresh
 - **Role-based Permissions** - Creator, Editor, and Viewer access levels
 - **Secure API Routes** - Protected endpoints with authentication middleware
@@ -546,7 +546,7 @@ npm install lexical@0.16.1 @lexical/react@0.16.1 @lexical/list@0.16.1
 **Issue**: Authentication not working
 
 - Verify your Clerk keys are correct
-- Check that GitHub OAuth is properly configured in Clerk dashboard
+- Check that Google OAuth is properly configured in Clerk dashboard
 - Ensure environment variables are properly loaded
 
 **Issue**: Real-time features not working
