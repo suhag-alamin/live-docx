@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $generateHtmlFromNodes } from "@lexical/html";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { saveAs } from "file-saver";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   AlignmentType,
@@ -50,7 +50,9 @@ export default function DownloadButtons({ title = "document" }: Props) {
 
   async function getHTML(): Promise<string> {
     if (!ready) throw new Error("Editor not ready");
-    return editor.getEditorState().read(() => $generateHtmlFromNodes(editor, null));
+    return editor
+      .getEditorState()
+      .read(() => $generateHtmlFromNodes(editor, null));
   }
 
   // ---------- helpers ----------
@@ -61,30 +63,48 @@ export default function DownloadButtons({ title = "document" }: Props) {
     return m ? m[1].trim() : undefined;
   };
 
-  const cssColorToHex = (value: string | null | undefined): string | undefined => {
+  const cssColorToHex = (
+    value: string | null | undefined
+  ): string | undefined => {
     if (!value) return undefined;
     const v = value.trim().toLowerCase();
 
     const hexM = v.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
     if (hexM) {
       let hex = hexM[1];
-      if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
+      if (hex.length === 3)
+        hex = hex
+          .split("")
+          .map((c) => c + c)
+          .join("");
       return hex.toUpperCase();
     }
 
     const rgbM = v.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i);
     if (rgbM) {
-      const [r, g, b] = rgbM.slice(1).map((n) => Math.max(0, Math.min(255, Number(n))));
-      return [r, g, b].map((n) => n.toString(16).padStart(2, "0")).join("").toUpperCase();
+      const [r, g, b] = rgbM
+        .slice(1)
+        .map((n) => Math.max(0, Math.min(255, Number(n))));
+      return [r, g, b]
+        .map((n) => n.toString(16).padStart(2, "0"))
+        .join("")
+        .toUpperCase();
     }
 
-    const rgbaM = v.match(/^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d*\.?\d+)\s*\)$/i);
+    const rgbaM = v.match(
+      /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d*\.?\d+)\s*\)$/i
+    );
     if (rgbaM) {
       const [r, g, b, aStr] = rgbaM.slice(1);
       const a = Number(aStr);
       if (a === 0) return undefined;
-      const [rr, gg, bb] = [r, g, b].map((n) => Math.max(0, Math.min(255, Number(n))));
-      return [rr, gg, bb].map((n) => n.toString(16).padStart(2, "0")).join("").toUpperCase();
+      const [rr, gg, bb] = [r, g, b].map((n) =>
+        Math.max(0, Math.min(255, Number(n)))
+      );
+      return [rr, gg, bb]
+        .map((n) => n.toString(16).padStart(2, "0"))
+        .join("")
+        .toUpperCase();
     }
 
     const NAMED: Record<string, string> = {
@@ -100,16 +120,23 @@ export default function DownloadButtons({ title = "document" }: Props) {
     return undefined;
   };
 
-  const getAlignment = (el?: HTMLElement): AlignmentType | undefined => {
+  const getAlignment = (
+    el?: HTMLElement
+  ): (typeof AlignmentType)[keyof typeof AlignmentType] | undefined => {
     if (!el) return undefined;
-    const style = (el.getAttribute("style") || "").replace(/\s+/g, "").toLowerCase();
+    const style = (el.getAttribute("style") || "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
     const classes = (el.getAttribute("class") || "").toLowerCase();
 
     if (style.includes("text-align:center") || classes.includes("text-center"))
       return AlignmentType.CENTER;
     if (style.includes("text-align:right") || classes.includes("text-right"))
       return AlignmentType.RIGHT;
-    if (style.includes("text-align:justify") || classes.includes("text-justify"))
+    if (
+      style.includes("text-align:justify") ||
+      classes.includes("text-justify")
+    )
       return AlignmentType.JUSTIFIED;
     if (style.includes("text-align:left") || classes.includes("text-left"))
       return AlignmentType.LEFT;
@@ -119,7 +146,8 @@ export default function DownloadButtons({ title = "document" }: Props) {
     if (norm.includes("center")) return AlignmentType.CENTER;
     if (norm.includes("right")) return AlignmentType.RIGHT;
     if (norm.includes("justify")) return AlignmentType.JUSTIFIED;
-    if (norm.includes("left") || norm.includes("start")) return AlignmentType.LEFT;
+    if (norm.includes("left") || norm.includes("start"))
+      return AlignmentType.LEFT;
     return undefined;
   };
 
@@ -147,7 +175,8 @@ export default function DownloadButtons({ title = "document" }: Props) {
       if (td) {
         const tdl = td.toLowerCase();
         if (tdl.includes("underline")) next.underline = true;
-        if (tdl.includes("line-through") || tdl.includes("strikethrough")) next.strike = true;
+        if (tdl.includes("line-through") || tdl.includes("strikethrough"))
+          next.strike = true;
       }
 
       const rawColor = extractCssProp(styleAttr, "color");
@@ -166,13 +195,20 @@ export default function DownloadButtons({ title = "document" }: Props) {
 
     node.childNodes.forEach((child) => {
       if (child.nodeType === Node.TEXT_NODE) {
-        const parentEl = node.nodeType === Node.ELEMENT_NODE ? (node as HTMLElement) : null;
+        const parentEl =
+          node.nodeType === Node.ELEMENT_NODE ? (node as HTMLElement) : null;
         const isInPre = parentEl?.tagName === "PRE";
         const raw = child.textContent || "";
-        const text = isInPre ? raw.replace(/\r\n/g, "\n") : raw.replace(/\s+/g, " ");
+        const text = isInPre
+          ? raw.replace(/\r\n/g, "\n")
+          : raw.replace(/\s+/g, " ");
         if (!text.length) return;
 
-        const runColor = (marks.color || defaultColor || "000000").toUpperCase();
+        const runColor = (
+          marks.color ||
+          defaultColor ||
+          "000000"
+        ).toUpperCase();
 
         if (isInPre) {
           text.split("\n").forEach((line, idx) => {
@@ -215,7 +251,12 @@ export default function DownloadButtons({ title = "document" }: Props) {
         const elComputed = cssColorToHex(getComputedStyle(el).color);
 
         // 3) pass down default: inline color > computed color > current default
-        const nextDefaultColor = (nextMarks.color || elComputed || defaultColor || "000000").toUpperCase();
+        const nextDefaultColor = (
+          nextMarks.color ||
+          elComputed ||
+          defaultColor ||
+          "000000"
+        ).toUpperCase();
 
         if (el.tagName === "BR") {
           runs.push(new TextRun({ break: 1 }));
@@ -237,7 +278,9 @@ export default function DownloadButtons({ title = "document" }: Props) {
           return;
         }
 
-        runs.push(...mkRuns(el, { marks: nextMarks, defaultColor: nextDefaultColor }));
+        runs.push(
+          ...mkRuns(el, { marks: nextMarks, defaultColor: nextDefaultColor })
+        );
       }
     });
 
@@ -249,14 +292,18 @@ export default function DownloadButtons({ title = "document" }: Props) {
     el: HTMLElement,
     defaultColor: string,
     opts: {
-      heading?: HeadingLevel;
-      alignment?: AlignmentType;
+      heading?: (typeof HeadingLevel)[keyof typeof HeadingLevel];
+      alignment?: (typeof AlignmentType)[keyof typeof AlignmentType];
       indentLeft?: number;
       numbering?: { reference: string; level: number };
     } = {}
   ) => {
     const elComputed = cssColorToHex(getComputedStyle(el).color);
-    const paraDefaultColor = (elComputed || defaultColor || "000000").toUpperCase();
+    const paraDefaultColor = (
+      elComputed ||
+      defaultColor ||
+      "000000"
+    ).toUpperCase();
     const children = mkRuns(el, { marks: {}, defaultColor: paraDefaultColor });
     if (!children.length) return;
     const paraAlign = opts.alignment ?? getAlignment(el);
@@ -276,7 +323,12 @@ export default function DownloadButtons({ title = "document" }: Props) {
   const BULLET_REF = "bullet-list";
   const NUMBER_REF = "number-list";
 
-  const processList = (out: Paragraph[], listEl: HTMLElement, defaultColor: string, depth = 0) => {
+  const processList = (
+    out: Paragraph[],
+    listEl: HTMLElement,
+    defaultColor: string,
+    depth = 0
+  ) => {
     const isUL = listEl.tagName === "UL";
     const ref = isUL ? BULLET_REF : NUMBER_REF;
 
@@ -285,25 +337,38 @@ export default function DownloadButtons({ title = "document" }: Props) {
       const liEl = li as HTMLElement;
 
       const main = liEl.cloneNode(true) as HTMLElement;
-      Array.from(main.querySelectorAll(":scope ul, :scope ol")).forEach((nested) => nested.remove());
+      Array.from(main.querySelectorAll(":scope ul, :scope ol")).forEach(
+        (nested) => nested.remove()
+      );
 
       pushParagraph(out, main, defaultColor, {
         numbering: { reference: ref, level: depth },
       });
 
-      const nestedLists = Array.from(liEl.querySelectorAll(":scope > ul, :scope > ol"));
-      nestedLists.forEach((n) => processList(out, n as HTMLElement, defaultColor, depth + 1));
+      const nestedLists = Array.from(
+        liEl.querySelectorAll(":scope > ul, :scope > ol")
+      );
+      nestedLists.forEach((n) =>
+        processList(out, n as HTMLElement, defaultColor, depth + 1)
+      );
     });
   };
 
   // ---------- tables ----------
-  const buildTable = (tableEl: HTMLTableElement, defaultColor: string): Table => {
+  const buildTable = (
+    tableEl: HTMLTableElement,
+    defaultColor: string
+  ): Table => {
     const rows = Array.from(
-      tableEl.querySelectorAll(":scope > thead > tr, :scope > tbody > tr, :scope > tfoot > tr, :scope > tr")
+      tableEl.querySelectorAll(
+        ":scope > thead > tr, :scope > tbody > tr, :scope > tfoot > tr, :scope > tr"
+      )
     ) as HTMLTableRowElement[];
 
     const docxRows = rows.map((tr) => {
-      const cells = Array.from(tr.querySelectorAll(":scope > th, :scope > td")) as HTMLElement[];
+      const cells = Array.from(
+        tr.querySelectorAll(":scope > th, :scope > td")
+      ) as HTMLElement[];
 
       const docxCells = cells.map((cell) => {
         const paras: Paragraph[] = [];
@@ -313,11 +378,19 @@ export default function DownloadButtons({ title = "document" }: Props) {
           if (n.nodeType === Node.ELEMENT_NODE) {
             const el = n as HTMLElement;
             const tag = el.tagName;
-            if (tag === "P" || tag === "DIV" || tag === "PRE" || /^H[1-6]$/.test(tag)) {
+            if (
+              tag === "P" ||
+              tag === "DIV" ||
+              tag === "PRE" ||
+              /^H[1-6]$/.test(tag)
+            ) {
               hasBlock = true;
               if (/^H[1-6]$/.test(tag)) {
                 const level = Number(tag.substring(1)) as 1 | 2 | 3 | 4 | 5 | 6;
-                const levelMap: Record<number, HeadingLevel> = {
+                const levelMap: Record<
+                  number,
+                  (typeof HeadingLevel)[keyof typeof HeadingLevel]
+                > = {
                   1: HeadingLevel.HEADING_1,
                   2: HeadingLevel.HEADING_2,
                   3: HeadingLevel.HEADING_3,
@@ -325,9 +398,14 @@ export default function DownloadButtons({ title = "document" }: Props) {
                   5: HeadingLevel.HEADING_5,
                   6: HeadingLevel.HEADING_6,
                 };
-                pushParagraph(paras, el, defaultColor, { heading: levelMap[level], alignment: getAlignment(el) });
+                pushParagraph(paras, el, defaultColor, {
+                  heading: levelMap[level],
+                  alignment: getAlignment(el),
+                });
               } else {
-                pushParagraph(paras, el, defaultColor, { alignment: getAlignment(el) });
+                pushParagraph(paras, el, defaultColor, {
+                  alignment: getAlignment(el),
+                });
               }
             } else if (tag === "UL" || tag === "OL") {
               hasBlock = true;
@@ -341,7 +419,9 @@ export default function DownloadButtons({ title = "document" }: Props) {
         }
 
         return new TableCell({
-          children: paras.length ? paras : [new Paragraph({ children: [new TextRun("")] })],
+          children: paras.length
+            ? paras
+            : [new Paragraph({ children: [new TextRun("")] })],
         });
       });
 
@@ -356,8 +436,12 @@ export default function DownloadButtons({ title = "document" }: Props) {
         bottom: { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC" },
         left: { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC" },
         right: { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC" },
-        insideH: { style: BorderStyle.SINGLE, size: 1, color: "DDDDDD" },
-        insideV: { style: BorderStyle.SINGLE, size: 1, color: "DDDDDD" },
+        insideHorizontal: {
+          style: BorderStyle.SINGLE,
+          size: 1,
+          color: "DDDDDD",
+        },
+        insideVertical: { style: BorderStyle.SINGLE, size: 1, color: "DDDDDD" },
       },
     });
   };
@@ -404,9 +488,16 @@ export default function DownloadButtons({ title = "document" }: Props) {
                   ? (n.parentNode as HTMLElement)
                   : null;
               const colorHex =
-                (parentEl && cssColorToHex(getComputedStyle(parentEl).color)) || globalDefault;
+                (parentEl && cssColorToHex(getComputedStyle(parentEl).color)) ||
+                globalDefault;
 
-              out.push(new Paragraph({ children: [new TextRun({ text: t, color: colorHex?.toUpperCase() })] }));
+              out.push(
+                new Paragraph({
+                  children: [
+                    new TextRun({ text: t, color: colorHex?.toUpperCase() }),
+                  ],
+                })
+              );
             }
           }
           return;
@@ -427,7 +518,10 @@ export default function DownloadButtons({ title = "document" }: Props) {
 
         if (/^H[1-6]$/.test(tag)) {
           const level = Number(tag.substring(1)) as 1 | 2 | 3 | 4 | 5 | 6;
-          const levelMap: Record<number, HeadingLevel> = {
+          const levelMap: Record<
+            number,
+            (typeof HeadingLevel)[keyof typeof HeadingLevel]
+          > = {
             1: HeadingLevel.HEADING_1,
             2: HeadingLevel.HEADING_2,
             3: HeadingLevel.HEADING_3,
@@ -451,7 +545,9 @@ export default function DownloadButtons({ title = "document" }: Props) {
         }
 
         if (tag === "P" || tag === "DIV" || tag === "PRE" || tag === "SPAN") {
-          pushParagraph(out as Paragraph[], el, globalDefault, { alignment: getAlignment(el) });
+          pushParagraph(out as Paragraph[], el, globalDefault, {
+            alignment: getAlignment(el),
+          });
           return;
         }
 
@@ -503,14 +599,18 @@ export default function DownloadButtons({ title = "document" }: Props) {
                   format: LevelFormat.BULLET,
                   text: "◦",
                   alignment: AlignmentType.LEFT,
-                  style: { paragraph: { indent: { left: 1440, hanging: 360 } } },
+                  style: {
+                    paragraph: { indent: { left: 1440, hanging: 360 } },
+                  },
                 },
                 {
                   level: 2,
                   format: LevelFormat.BULLET,
                   text: "▪",
                   alignment: AlignmentType.LEFT,
-                  style: { paragraph: { indent: { left: 2160, hanging: 360 } } },
+                  style: {
+                    paragraph: { indent: { left: 2160, hanging: 360 } },
+                  },
                 },
               ],
             },
@@ -529,14 +629,18 @@ export default function DownloadButtons({ title = "document" }: Props) {
                   format: LevelFormat.DECIMAL,
                   text: "%2.",
                   alignment: AlignmentType.LEFT,
-                  style: { paragraph: { indent: { left: 1440, hanging: 360 } } },
+                  style: {
+                    paragraph: { indent: { left: 1440, hanging: 360 } },
+                  },
                 },
                 {
                   level: 2,
                   format: LevelFormat.DECIMAL,
                   text: "%3.",
                   alignment: AlignmentType.LEFT,
-                  style: { paragraph: { indent: { left: 2160, hanging: 360 } } },
+                  style: {
+                    paragraph: { indent: { left: 2160, hanging: 360 } },
+                  },
                 },
               ],
             },
@@ -569,7 +673,9 @@ export default function DownloadButtons({ title = "document" }: Props) {
       }
 
       // images CORS warmup
-      const imgs = Array.from(root.querySelectorAll("img")) as HTMLImageElement[];
+      const imgs = Array.from(
+        root.querySelectorAll("img")
+      ) as HTMLImageElement[];
       imgs.forEach((img) => {
         if (!img.crossOrigin) img.crossOrigin = "anonymous";
       });
@@ -601,8 +707,14 @@ export default function DownloadButtons({ title = "document" }: Props) {
             allowTaint: true,
             backgroundColor: "#ffffff",
             logging: false,
-            windowWidth: Math.max(document.documentElement.clientWidth, root.scrollWidth),
-            windowHeight: Math.max(document.documentElement.clientHeight, root.scrollHeight),
+            windowWidth: Math.max(
+              document.documentElement.clientWidth,
+              root.scrollWidth
+            ),
+            windowHeight: Math.max(
+              document.documentElement.clientHeight,
+              root.scrollHeight
+            ),
           },
           jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
         })
@@ -614,7 +726,7 @@ export default function DownloadButtons({ title = "document" }: Props) {
 
   const disabled = !ready || busy !== null;
 
- return (
+  return (
     <div className="flex w-full flex-row items-center gap-3">
       <button
         onClick={downloadDocx}
@@ -628,11 +740,7 @@ export default function DownloadButtons({ title = "document" }: Props) {
         ].join(" ")}
         aria-label="Download as Word document"
       >
-        {busy === "docx" ? (
-          <Spinner />
-        ) : (
-          <SvgDocx />
-        )}
+        {busy === "docx" ? <Spinner /> : <SvgDocx />}
       </button>
 
       <button
@@ -647,11 +755,7 @@ export default function DownloadButtons({ title = "document" }: Props) {
         ].join(" ")}
         aria-label="Download as PDF"
       >
-        {busy === "pdf" ? (
-          <Spinner />
-        ) : (
-          <SvgPdf />
-        )}
+        {busy === "pdf" ? <Spinner /> : <SvgPdf />}
       </button>
     </div>
   );
@@ -666,15 +770,32 @@ function Spinner({ className = "" }: { className?: string }) {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4A4 4 0 008 12H4z" />
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+        fill="none"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4A4 4 0 008 12H4z"
+      />
     </svg>
   );
 }
 
 function SvgDocx({ className = "" }: { className?: string }) {
   return (
-    <svg className={"h-5 w-5 " + className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg
+      className={"h-5 w-5 " + className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM13 9V3.5L18.5 9H13z" />
       <path d="M7 13h10v2H7zm0 4h7v2H7zm0-8h6v2H7z" />
     </svg>
@@ -683,7 +804,12 @@ function SvgDocx({ className = "" }: { className?: string }) {
 
 function SvgPdf({ className = "" }: { className?: string }) {
   return (
-    <svg className={"h-5 w-5 " + className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg
+      className={"h-5 w-5 " + className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <path d="M14 2H6a2 2 0 00-2 2v6h2V4h8V2z" />
       <path d="M18 8h-4V4l4 4zM4 10h16v10a2 2 0 01-2 2H6a2 2 0 01-2-2V10z" />
       <path d="M7 14h3a2 2 0 110 4H7v-4zm2 2h1a1 1 0 100-2H9v2zM14 14h3v1h-2v1h2v2h-3v-1h2v-1h-2v-2z" />

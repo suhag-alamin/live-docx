@@ -14,11 +14,13 @@ declare type RoomMetadata = {
   creatorId: string;
   email: string;
   title: string;
+  templateId?: string;
 };
 
 declare type CreateDocumentParams = {
   userId: string;
   email: string;
+  templateId?: string;
 };
 
 declare type User = {
@@ -73,6 +75,22 @@ declare type CollaborativeRoomProps = {
 declare type AddDocumentBtnProps = {
   userId: string;
   email: string;
+};
+
+declare type TemplateSelectorProps = {
+  userId: string;
+  email: string;
+  onClose: () => void;
+};
+
+declare type DocumentTemplate = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  icon: string;
+  content: string;
+  preview: string;
 };
 
 declare type DeleteModalProps = { roomId: string };
