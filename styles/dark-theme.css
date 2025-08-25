@@ -10,7 +10,7 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular',
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular",
     sans-serif;
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
@@ -250,21 +250,37 @@ body {
 .editor-list-ol {
   padding: 0;
   margin: 0;
-  margin-left: 16px;
+  margin-left: 24px;
+  list-style-type: decimal;
+  color: #e5e7eb;
+  font-size: 14px;
 }
 
 .editor-list-ul {
   padding: 0;
   margin: 0;
-  margin-left: 16px;
+  margin-left: 24px;
+  list-style-type: disc;
+  color: #e5e7eb;
+  font-size: 14px;
 }
 
 .editor-listitem {
-  margin: 8px 32px 8px 32px;
+  margin: 6px 0;
+  padding-left: 4px;
+  color: #e5e7eb;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.editor-listitem::marker {
+  color: #e5e7eb;
+  font-size: 14px;
 }
 
 .editor-nested-listitem {
-  list-style-type: none;
+  list-style-type: circle;
+  margin-left: 20px;
 }
 
 pre::-webkit-scrollbar {
@@ -455,4 +471,16 @@ i.h2 {
 
 i.h3 {
   background-image: url(/assets/icons/h3.svg);
+}
+
+i.bullet-list {
+  background-image: url(/assets/icons/bullet-list.svg);
+}
+
+i.numbered-list {
+  background-image: url(/assets/icons/numbered-list.svg);
+}
+
+i.quote {
+  background-image: url(/assets/icons/quote.svg);
 }

@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<text x="6" y="9" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="currentColor">1.</text>
+<rect x="12" y="6" width="10" height="2" fill="currentColor"/>
+<text x="6" y="14" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="currentColor">2.</text>
+<rect x="12" y="11" width="10" height="2" fill="currentColor"/>
+<text x="6" y="19" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="currentColor">3.</text>
+<rect x="12" y="16" width="10" height="2" fill="currentColor"/>
+</svg>
